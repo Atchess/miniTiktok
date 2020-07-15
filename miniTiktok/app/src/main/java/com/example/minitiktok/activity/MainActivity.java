@@ -1,8 +1,10 @@
-package com.example.minitiktok;
+package com.example.minitiktok.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.minitiktok.R;
 
 public class MainActivity extends AppCompatActivity {
 
