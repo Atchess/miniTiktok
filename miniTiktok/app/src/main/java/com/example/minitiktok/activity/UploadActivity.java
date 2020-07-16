@@ -2,14 +2,18 @@ package com.example.minitiktok.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.minitiktok.AddVideo;
 import com.example.minitiktok.R;
 import com.example.minitiktok.api.IMiniDouyinService;
 import com.example.minitiktok.utils.ResourceUtils;
@@ -70,6 +74,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO);
     }
+    private String[] mPermissionsArrays = new String[]{Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO};
+    private final static int REQUEST_PERMISSION = 123;
 
     @Override
     public void onClick(View view) {
@@ -82,6 +91,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.btn_take_video:
             case R.id.btn_take_photo:
+                if (!checkPermissionAllGranted(mPermissionsArrays)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(mPermissionsArrays, REQUEST_PERMISSION);
+                    }
+                }
+                Intent it1=new Intent(this, AddVideo.class);
+                startActivityForResult(it1,PICK_IMAGE);
                 break;
             case R.id.btn_upload:
                 postVideo();
@@ -146,5 +162,19 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 });
         Log.i("TAG","finish");
+    }
+    private boolean checkPermissionAllGranted(String[] permissions) {
+        // 6.0以下不需要
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+
+                // 只要有一个权限没有被授予, 则直接返回 false
+                return false;
+            }
+        }
+        return true;
     }
 }
