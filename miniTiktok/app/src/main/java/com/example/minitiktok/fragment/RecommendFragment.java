@@ -147,7 +147,27 @@ public class RecommendFragment extends BaseFragment {
         refreshLayout.setOnRefreshListener(() -> new CountDownTimer(1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(IMiniDouyinService.BASE_URL)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+                IMiniDouyinService miniDouyinService = retrofit.create(IMiniDouyinService.class);
+                miniDouyinService.getVideos().enqueue(new Callback<GetVideosResponse>() {
+                    @Override
+                    public void onResponse(Call<GetVideosResponse> call, Response<GetVideosResponse> response) {
+                        if (response.body() != null && response.body().videos != null) {
+                            datas.clear();
+                            datas = response.body().videos;
+                            //adapter.notifyDataSetChanged();
+                            adapter = new VideoAdapter(getActivity(),datas);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<GetVideosResponse> call, Throwable throwable) {
+                        Log.i("TAG","fail");
+                    }
+                });
             }
 
             @Override

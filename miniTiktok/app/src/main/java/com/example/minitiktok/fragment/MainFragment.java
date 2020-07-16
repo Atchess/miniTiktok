@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.androidkun.xtablayout.XTabLayout;
+import com.example.minitiktok.activity.MyVideoActivity;
 import com.example.minitiktok.activity.UploadActivity;
 import com.example.minitiktok.base.BaseActivity;
 import com.example.minitiktok.base.BaseFragment;
@@ -57,6 +58,15 @@ public class MainFragment extends BaseFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), UploadActivity.class);
                 startActivity(intent);
+            }
+        });
+        tabMainMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tabMainMenu.getTabAt(4).isSelected()) {
+                    Intent intent = new Intent(getActivity(), MyVideoActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
