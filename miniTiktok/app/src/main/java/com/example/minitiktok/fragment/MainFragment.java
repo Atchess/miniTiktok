@@ -14,11 +14,15 @@ import com.example.minitiktok.base.BaseActivity;
 import com.example.minitiktok.base.BaseFragment;
 import com.example.minitiktok.R;
 import com.example.minitiktok.base.BasePagerAdapter;
+import com.example.minitiktok.utils.RxBus;
+import com.example.minitiktok.video.PauseVideoEvent;
 
 import java.util.ArrayList;
 
 public class MainFragment extends BaseFragment {
 
+    private RecommendFragment recommendFragment;
+    private AllFragment allFragment;
     ViewPager viewPager;
     XTabLayout tabTitle;
     XTabLayout tabMainMenu;
@@ -45,13 +49,19 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setFragment(){
+
+        recommendFragment = new RecommendFragment();
+        allFragment = new AllFragment();
+        fragments.add(allFragment);
+        fragments.add(recommendFragment);
+
         tabTitle.addTab(tabTitle.newTab().setText("本地"));
         tabTitle.addTab(tabTitle.newTab().setText("推荐"));
 
         pagerAdapter = new BasePagerAdapter(getChildFragmentManager(), fragments, new String[] {"本地","推荐"});
         viewPager.setAdapter(pagerAdapter);
         tabTitle.setupWithViewPager(viewPager);
-        //tabTitle.getTabAt(1).select();
+        tabTitle.getTabAt(1).select();
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -62,7 +72,13 @@ public class MainFragment extends BaseFragment {
             @Override
             public void onPageSelected(int position) {
                 curPage = position;
-
+                if (position == 1) {
+                    //继续播放
+                    RxBus.getDefault().post(new PauseVideoEvent(true));
+                } else {
+                    //切换到其他页面，需要暂停视频
+                    RxBus.getDefault().post(new PauseVideoEvent(false));
+                }
             }
 
             @Override
