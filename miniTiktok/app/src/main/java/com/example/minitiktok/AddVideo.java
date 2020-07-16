@@ -2,12 +2,14 @@ package com.example.minitiktok;
 
 import android.app.Activity;
 //import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 //import android.support.annotation.Nullable;
@@ -17,6 +19,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -34,7 +37,7 @@ public class AddVideo extends Activity {
     private CameraPreview mPreview;
     private MediaRecorder mMediaRecorder;
     //    private ImageView preview;
-    private Button trigger;
+    private ImageButton trigger,confirm;
     private Camera.PictureCallback mPicture;
 //    SurfaceHolder mHolder;
 
@@ -59,6 +62,9 @@ public class AddVideo extends Activity {
                     fos.close();
                     ImageView preview=findViewById(R.id.image_preview);
                     Bitmap bitmap= BitmapFactory.decodeFile(filePath);
+                    ImageButton cfm=findViewById(R.id.finish);
+                    cfm.bringToFront();
+                    cfm.setVisibility(View.VISIBLE);
                     preview.bringToFront();
                     preview.setVisibility(View.VISIBLE);
                     mCamera.startPreview();
@@ -81,6 +87,16 @@ public class AddVideo extends Activity {
                 }
             }
         });
+//        trigger.bringToFront();
+        confirm=findViewById(R.id.finish);
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it2=new Intent();
+                it2.setData(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "1.jpg")));
+                finish();
+            }
+        });
     }
 
     @Override
@@ -92,6 +108,7 @@ public class AddVideo extends Activity {
         ConstraintLayout prev=findViewById(R.id.Camera_Layout);
         prev.addView(mPreview);
         mCamera.startPreview();
+        trigger.bringToFront();
     }
 
     private void initCamera() {

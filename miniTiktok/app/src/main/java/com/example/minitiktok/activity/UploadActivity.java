@@ -95,9 +95,10 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         requestPermissions(mPermissionsArrays, REQUEST_PERMISSION);
                     }
+                }else {
+                    Intent it1 = new Intent(this, AddVideo.class);
+                    startActivityForResult(it1, PICK_IMAGE);
                 }
-                Intent it1=new Intent(this, AddVideo.class);
-                startActivityForResult(it1,PICK_IMAGE);
                 break;
             case R.id.btn_upload:
                 postVideo();
