@@ -50,13 +50,6 @@ public class AllFragment extends BaseFragment {
 
         fetchFeed();
 
-        /*recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-
-        adapter = new GridVideoAdapter(getActivity(),datas);
-        recyclerView.setAdapter(adapter);*/
-
-
-
         refreshLayout.setColorSchemeResources(R.color.color_link);
         refreshLayout.setOnRefreshListener(() -> new CountDownTimer(1000, 1000) {
             @Override

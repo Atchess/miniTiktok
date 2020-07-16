@@ -34,7 +34,6 @@ public class VideoAdapter extends BaseRvAdapter<VideoClass, VideoAdapter.VideoVi
     @Override
     protected void onBindData(VideoViewHolder holder, VideoClass videoClass, int position) {
         holder.controllerView.setVideoData(videoClass);
-
         Glide.with(holder.ivCover.getContext()).load(Uri.parse(videoClass.getCoverRes())).into(holder.ivCover);
         Log.i("TAG","VideoAdapter");
 

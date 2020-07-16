@@ -33,11 +33,9 @@ public class ControllerView extends RelativeLayout implements View.OnClickListen
     private void init() {
         View rootView = LayoutInflater.from(getContext()).inflate(R.layout.view_controller, this);
         rlLike = rootView.findViewById(R.id.rl_like);
-//        ivFocus = rootView.findViewById(R.id.iv_focus);
         rlRecord = rootView.findViewById(R.id.rl_record);
         animationView = rootView.findViewById(R.id.lottie_anim);
         rlLike.setOnClickListener(this);
-//        ivFocus.setOnClickListener(this);
 
 
         setRotateAnim();

@@ -1,5 +1,6 @@
 package com.example.minitiktok.fragment;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -52,6 +54,13 @@ public class RecommendFragment extends BaseFragment {
     SwipeRefreshLayout refreshLayout;
     private ImageView ivCurCover;
 
+
+   /* @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        fetchFeed();
+    }*/
+
     @Override
     protected int setLayoutId() {
         return R.layout.fragment_recommend;
@@ -60,15 +69,13 @@ public class RecommendFragment extends BaseFragment {
     @Override
     protected void init() {
         Log.i("TAG","recommendfragment init() Start");
+        fetchFeed();
         recyclerView = rootView.findViewById(R.id.recyclerview);
         refreshLayout = rootView.findViewById(R.id.refreshlayout);
-        //adapter = new VideoAdapter(getActivity(), new DataCreate().datas);
+        //adapter = new VideoAdapter(getActivity(),datas);
         //recyclerView.setAdapter(adapter);
-        fetchFeed();
-
         videoView = new FullScreenVideoView(getActivity());
 
-        Log.i("TAG","hghh");
         setViewPagerLayoutManager();
 
         setRefreshEvent();
@@ -82,8 +89,8 @@ public class RecommendFragment extends BaseFragment {
                         videoView.pause();
                     }
                 });
-
     }
+
 
     @Override
     public void onResume() {
@@ -113,7 +120,6 @@ public class RecommendFragment extends BaseFragment {
         viewPagerLayoutManager = new ViewPagerLayoutManager(getActivity());
         recyclerView.setLayoutManager(viewPagerLayoutManager);
         recyclerView.scrollToPosition(PlayListActivity.initPos);
-
         viewPagerLayoutManager.setOnViewPagerListener(new OnViewPagerListener() {
             @Override
             public void onInitComplete() {
@@ -201,7 +207,8 @@ public class RecommendFragment extends BaseFragment {
      * 自动播放视频
      */
     private void autoPlayVideo(int position, ImageView ivCover) {
-        videoView.setVideoPath("https://media.w3.org/2010/05/sintel/trailer.mp4");
+
+        videoView.setVideoURI(Uri.parse(datas.get(position).videoUrl));
         videoView.start();
         videoView.setOnPreparedListener(mp -> {
             mp.setLooping(true);
@@ -233,10 +240,11 @@ public class RecommendFragment extends BaseFragment {
             public void onResponse(Call<GetVideosResponse> call, Response<GetVideosResponse> response) {
                 List<VideoClass> Videos = new ArrayList<>();
                 if (response.body() != null && response.body().videos != null) {
+
                     datas = response.body().videos;
-                    recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
                     adapter = new VideoAdapter(getActivity(),datas);
                     recyclerView.setAdapter(adapter);
+                    //setViewPagerLayoutManager();
                 }
                 recyclerView.getAdapter().notifyDataSetChanged();
             }
