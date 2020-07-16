@@ -142,6 +142,8 @@ public class RecommendFragment extends BaseFragment {
 
     private void setRefreshEvent() {
         refreshLayout.setColorSchemeResources(R.color.color_link);
+        MainActivity.curMainPage = 0 ;
+        MainFragment.curPage = 1;
         refreshLayout.setOnRefreshListener(() -> new CountDownTimer(1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {

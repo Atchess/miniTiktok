@@ -66,6 +66,7 @@
             android:background="@color/black" />
 
         <ImageView
+            android:id="@+id/new_vedio"
             android:layout_width="50dp"
             android:layout_height="35dp"
             android:background="@mipmap/ic_main_menu"

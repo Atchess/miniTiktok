@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -35,6 +36,7 @@ public class VideoAdapter extends BaseRvAdapter<VideoClass, VideoAdapter.VideoVi
     protected void onBindData(VideoViewHolder holder, VideoClass videoClass, int position) {
         holder.controllerView.setVideoData(videoClass);
         Glide.with(holder.ivCover.getContext()).load(Uri.parse(videoClass.getCoverRes())).into(holder.ivCover);
+        holder.nickName.setText("@"+videoClass.getUserName());
         Log.i("TAG","VideoAdapter");
 
         holder.likeView.setOnLikeListener(() -> {
@@ -56,12 +58,14 @@ public class VideoAdapter extends BaseRvAdapter<VideoClass, VideoAdapter.VideoVi
         LikeView likeView;
         ControllerView controllerView;
         ImageView ivCover;
+        TextView nickName;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
             likeView = itemView.findViewById(R.id.likeview);
             controllerView = itemView.findViewById(R.id.controller);
             ivCover = itemView.findViewById(R.id.iv_cover);
+            nickName = itemView.findViewById(R.id.tv_nickname);
         }
     }
 }

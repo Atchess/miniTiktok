@@ -39,7 +39,13 @@
         <RelativeLayout
             android:layout_width="52dp"
             android:layout_height="62dp">
-
+            <com.example.minitiktok.view.CircleImageView
+                android:id="@+id/iv_head"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                app:es_shape_type="round"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/logo"/>
             <ImageView
                 android:id="@+id/iv_focus"
                 android:layout_width="25dp"

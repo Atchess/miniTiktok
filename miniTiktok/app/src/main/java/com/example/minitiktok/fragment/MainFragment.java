@@ -1,15 +1,18 @@
 package com.example.minitiktok.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.androidkun.xtablayout.XTabLayout;
+import com.example.minitiktok.activity.UploadActivity;
 import com.example.minitiktok.base.BaseActivity;
 import com.example.minitiktok.base.BaseFragment;
 import com.example.minitiktok.R;
@@ -26,6 +29,7 @@ public class MainFragment extends BaseFragment {
     ViewPager viewPager;
     XTabLayout tabTitle;
     XTabLayout tabMainMenu;
+    ImageView newVedio;
 
     private ArrayList<Fragment> fragments = new ArrayList<>();
     private BasePagerAdapter pagerAdapter;
@@ -44,8 +48,17 @@ public class MainFragment extends BaseFragment {
         viewPager = rootView.findViewById(R.id.viewpager);
         tabTitle = rootView.findViewById(R.id.tab_title);
         tabMainMenu = rootView.findViewById(R.id.tab_mainmenu);
+        newVedio = rootView.findViewById(R.id.new_vedio);
+
         setFragment();
         setMainMenu();
+        newVedio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UploadActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setFragment(){
