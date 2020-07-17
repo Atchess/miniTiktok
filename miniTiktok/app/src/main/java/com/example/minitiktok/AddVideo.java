@@ -106,10 +106,19 @@ public class AddVideo extends Activity {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent it2=new Intent();
-                Uri uri=Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "1.jpg"));
-                it2.setData(uri);
+                String uri;
+                if(video_preview.getVisibility()==View.VISIBLE)
+                    uri=getOutputMediaPath();
+                else
+                    uri =getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "1.jpg";
+
                 Log.i("THE CAMERA","URI:"+uri.toString());
+                Intent it2=getIntent();
+                Bundle result=new Bundle();
+                result.putString("Url",uri);
+                it2.putExtra("Url",uri);
+                setResult(-1,it2);
+                Log.i("CAMERA,PATH",uri);
                 finish();
             }
         });
@@ -142,6 +151,9 @@ public class AddVideo extends Activity {
                                 video_preview.bringToFront();
                                 video_preview.setVisibility(View.VISIBLE);
                                 player.setLooping(false);
+                                ImageButton cfm=findViewById(R.id.finish);
+                                cfm.bringToFront();
+                                cfm.setVisibility(View.VISIBLE);
                             }
                         });
                     } catch (IOException e) {

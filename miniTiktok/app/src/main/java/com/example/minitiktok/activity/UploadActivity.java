@@ -36,6 +36,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     private static final int PICK_IMAGE = 1;
     private static final int PICK_VIDEO = 2;
+    private static final int TAKE_VIDEO = 3;
+    private static final int TAKE_IMAGE = 4;
     private static final String TAG = "UploadActivity";
     public Uri mSelectedImage;
     private Uri mSelectedVideo;
@@ -97,7 +99,9 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                     }
                 }else {
                     Intent it1 = new Intent(this, AddVideo.class);
-                    startActivityForResult(it1, PICK_IMAGE);
+                    if(view.getId()==R.id.btn_take_photo)
+                    startActivityForResult(it1, TAKE_IMAGE);
+                    else startActivityForResult(it1,TAKE_VIDEO);
                 }
                 break;
             case R.id.btn_upload:
@@ -126,16 +130,31 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 mSelectedVideo = data.getData();
                 Log.d(TAG, "mSelectedVideo = " + mSelectedVideo);
             }
+            else if (requestCode == TAKE_IMAGE) {
+                mSelectedImage = Uri.parse(data.getStringExtra("Url"));
+                Log.d(TAG, "selectedImage = " + mSelectedImage);
+            } else if (requestCode == TAKE_VIDEO) {
+                mSelectedVideo = Uri.parse(data.getStringExtra("Url"));
+                Log.d(TAG, "mSelectedVideo = " + mSelectedVideo);
+            }
         }
     }
 
     private MultipartBody.Part getMultipartFromUri(String name, Uri uri) {
-        File f = new File(ResourceUtils.getRealPath(UploadActivity.this, uri));
+        File f;
+        if (uri.toString().charAt(0) != '/')
+            f = new File(ResourceUtils.getRealPath(UploadActivity.this, uri));
+        else
+            f =new File(uri.toString());
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
         return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
     }
 
     private void postVideo() {
+        if (mSelectedImage==null || mSelectedVideo==null){
+            Toast.makeText(UploadActivity.this, "需要选择数据", Toast.LENGTH_SHORT).show();
+            return ;
+        }
         mBtn.setText("POSTING...");
         mBtn.setEnabled(false);
         MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", mSelectedImage);
