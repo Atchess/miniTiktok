@@ -24,7 +24,13 @@ public class SplashActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                Intent intent = getIntent();
+                if (intent.getStringExtra("login") != null){
+                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                }
+                else {
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                }
                 finish();
             }
         }.start();

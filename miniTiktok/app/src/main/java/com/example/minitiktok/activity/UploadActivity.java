@@ -1,20 +1,22 @@
 package com.example.minitiktok.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Intent;
-import android.hardware.Camera;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.minitiktok.AddVideo;
 import com.example.minitiktok.R;
 import com.example.minitiktok.api.IMiniDouyinService;
+import com.example.minitiktok.base.Data;
 import com.example.minitiktok.utils.ResourceUtils;
 import com.example.minitiktok.video.PostVideoResponse;
 
@@ -42,6 +44,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     private Uri mSelectedVideo;
     public Button mBtn;
     private Button mBtnRefresh;
+    Data app;
 
     private Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(IMiniDouyinService.BASE_URL)
@@ -59,6 +62,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.btn_upload_photo).setOnClickListener(this);
         findViewById(R.id.btn_take_video).setOnClickListener(this);
         findViewById(R.id.btn_take_photo).setOnClickListener(this);
+        app = (Data)getApplication();
+
     }
 
     public void chooseImage() {
@@ -75,6 +80,11 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Video"), PICK_VIDEO);
     }
+    private String[] mPermissionsArrays = new String[]{Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO};
+    private final static int REQUEST_PERMISSION = 123;
 
     @Override
     public void onClick(View view) {
@@ -86,25 +96,22 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 chooseImage();
                 break;
             case R.id.btn_take_video:
-                takeVideo();
-                break;
             case R.id.btn_take_photo:
-                takePhoto();
+                if (!checkPermissionAllGranted(mPermissionsArrays)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(mPermissionsArrays, REQUEST_PERMISSION);
+                    }
+                }else {
+                    Intent it1 = new Intent(this, AddVideo.class);
+                    if(view.getId()==R.id.btn_take_photo)
+                    startActivityForResult(it1, TAKE_IMAGE);
+                    else startActivityForResult(it1,TAKE_VIDEO);
+                }
                 break;
             case R.id.btn_upload:
                 postVideo();
                 break;
         }
-    }
-
-    private void takeVideo(){
-        Intent intent = new Intent(UploadActivity.this, TakeVideoActivity.class);
-        startActivityForResult(intent,TAKE_VIDEO);
-    }
-
-    private void takePhoto(){
-        Intent intent = new Intent(UploadActivity.this, TakePhotoActivity.class);
-        startActivityForResult(intent,TAKE_IMAGE);
     }
 
     @Override
@@ -126,7 +133,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             } else if (requestCode == PICK_VIDEO) {
                 mSelectedVideo = data.getData();
                 Log.d(TAG, "mSelectedVideo = " + mSelectedVideo);
-            } else if (requestCode == TAKE_IMAGE) {
+            }
+            else if (requestCode == TAKE_IMAGE) {
                 mSelectedImage = Uri.parse(data.getStringExtra("Url"));
                 Log.d(TAG, "selectedImage = " + mSelectedImage);
             } else if (requestCode == TAKE_VIDEO) {
@@ -143,7 +151,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
         else
             f =new File(uri.toString());
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
-        //Log.i("TAG",name+":"+ResourceUtils.getRealPath(UploadActivity.this, uri));
         return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
     }
 
@@ -152,13 +159,13 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(UploadActivity.this, "需要选择数据", Toast.LENGTH_SHORT).show();
             return ;
         }
-        mBtn.setText("正在上传...");
+        mBtn.setText("POSTING...");
         mBtn.setEnabled(false);
         MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", mSelectedImage);
         MultipartBody.Part videoPart = getMultipartFromUri("video", mSelectedVideo);
         Log.i("TAG",mSelectedImage.toString() + ";" + mSelectedVideo.toString());
         //@TODO 4下面的id和名字替换成自己的
-        miniDouyinService.postVideo("18888916233", "名字", coverImagePart, videoPart).enqueue(
+        miniDouyinService.postVideo(app.getA(), app.getB(), coverImagePart, videoPart).enqueue(
                 new Callback<PostVideoResponse>() {
                     @Override
                     public void onResponse(Call<PostVideoResponse> call, Response<PostVideoResponse> response) {
@@ -168,6 +175,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                                     .show();
                         }
                         mBtn.setEnabled(true);
+                        mBtn.setText(R.string.post_it);
                     }
 
                     @Override
@@ -176,9 +184,22 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                         mBtn.setText(R.string.post_it);
                         mBtn.setEnabled(true);
                         Toast.makeText(UploadActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.i("TAG","fail"+throwable.getMessage());
                     }
                 });
         Log.i("TAG","finish");
+    }
+    private boolean checkPermissionAllGranted(String[] permissions) {
+        // 6.0以下不需要
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        for (String permission : permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+
+                // 只要有一个权限没有被授予, 则直接返回 false
+                return false;
+            }
+        }
+        return true;
     }
 }

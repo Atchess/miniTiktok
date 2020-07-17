@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/Camera_Layout"
+    android:layout_height="match_parent">
+    <ImageButton
+        android:id="@+id/finish"
+        android:layout_width="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_action_name"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/videoshoot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="100dp"
+        android:text="摄影"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/image_preview"
+        android:layout_width="108dp"
+        android:layout_height="192dp"
+        android:visibility="invisible"/>
+    <SurfaceView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/video_preview"
+        android:layout_width="108dp"
+        android:layout_height="192dp"
+        android:visibility="invisible"/>
+
+    <Button
+        android:id="@+id/camera_trigger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.274"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="拍摄"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

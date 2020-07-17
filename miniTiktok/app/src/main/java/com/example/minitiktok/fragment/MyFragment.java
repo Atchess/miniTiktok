@@ -11,6 +11,7 @@ import com.example.minitiktok.adapter.GridVideoAdapter;
 import com.example.minitiktok.adapter.VideoAdapter;
 import com.example.minitiktok.api.IMiniDouyinService;
 import com.example.minitiktok.base.BaseFragment;
+import com.example.minitiktok.base.Data;
 import com.example.minitiktok.video.DataCreate;
 import com.example.minitiktok.video.GetVideosResponse;
 import com.example.minitiktok.video.VideoClass;
@@ -33,7 +34,7 @@ public class MyFragment extends BaseFragment {
     RecyclerView recyclerView;
     private GridVideoAdapter adapter;
     public static List<VideoClass> datas;
-
+    Data app;
     SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -47,7 +48,7 @@ public class MyFragment extends BaseFragment {
         Log.i("TAG","myfragment init() Start");
         recyclerView = rootView.findViewById(R.id.recyclerview);
         refreshLayout = rootView.findViewById(R.id.refreshlayout);
-
+        app = (Data)getActivity().getApplication();
 
         fetchFeed();
 
@@ -66,7 +67,7 @@ public class MyFragment extends BaseFragment {
                         if (response.body() != null && response.body().videos != null) {
                             datas.clear();
                             for(VideoClass v : response.body().videos) {
-                                if(v.studentId.equals(("18888916233"))){
+                                if(v.studentId.equals(app.getA())){
                                     datas.add(v);
                                 }
                             }
@@ -102,7 +103,7 @@ public class MyFragment extends BaseFragment {
                 if (response.body() != null && response.body().videos != null) {
                     datas = new ArrayList<VideoClass>();
                     for(VideoClass v : response.body().videos) {
-                        if(v.studentId.equals(("18888916233"))){
+                        if(v.studentId.equals(app.getA())){
                             datas.add(v);
                         }
                     }
