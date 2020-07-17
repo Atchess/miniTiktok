@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".activity.MyVideoActivity">
 
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewpager_my"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

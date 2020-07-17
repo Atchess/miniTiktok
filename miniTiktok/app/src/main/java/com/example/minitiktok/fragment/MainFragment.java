@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
@@ -31,6 +32,7 @@ public class MainFragment extends BaseFragment {
     XTabLayout tabTitle;
     XTabLayout tabMainMenu;
     ImageView newVedio;
+    Button button;
 
     private ArrayList<Fragment> fragments = new ArrayList<>();
     private BasePagerAdapter pagerAdapter;
@@ -50,6 +52,8 @@ public class MainFragment extends BaseFragment {
         tabTitle = rootView.findViewById(R.id.tab_title);
         tabMainMenu = rootView.findViewById(R.id.tab_mainmenu);
         newVedio = rootView.findViewById(R.id.new_vedio);
+        button = rootView.findViewById(R.id.btn_myVideo);
+
 
         setFragment();
         setMainMenu();
@@ -60,13 +64,11 @@ public class MainFragment extends BaseFragment {
                 startActivity(intent);
             }
         });
-        tabMainMenu.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (tabMainMenu.getTabAt(4).isSelected()) {
                     Intent intent = new Intent(getActivity(), MyVideoActivity.class);
                     startActivity(intent);
-                }
             }
         });
     }
@@ -112,10 +114,10 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setMainMenu() {
-        tabMainMenu.addTab(tabMainMenu.newTab().setText("首页"));
-        tabMainMenu.addTab(tabMainMenu.newTab().setText("好友"));
         tabMainMenu.addTab(tabMainMenu.newTab().setText(""));
-        tabMainMenu.addTab(tabMainMenu.newTab().setText("消息"));
-        tabMainMenu.addTab(tabMainMenu.newTab().setText("我"));
+        tabMainMenu.addTab(tabMainMenu.newTab().setText(""));
+        tabMainMenu.addTab(tabMainMenu.newTab().setText(""));
+        tabMainMenu.addTab(tabMainMenu.newTab().setText(""));
+        tabMainMenu.addTab(tabMainMenu.newTab().setText(""));
     }
 }

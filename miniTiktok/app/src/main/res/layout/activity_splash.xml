@@ -12,4 +12,5 @@
         android:layout_height="160dp"
         android:background="@mipmap/logo"
         android:layout_centerInParent="true"/>
+    
 </RelativeLayout>

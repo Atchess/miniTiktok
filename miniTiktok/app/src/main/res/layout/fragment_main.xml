@@ -63,7 +63,8 @@
             app:xTabTextSize="15sp"
             app:xTabSelectedTextSize="16sp"
             android:layout_height="50dp"
-            android:background="@color/black" />
+            android:background="@color/black" >
+        </com.androidkun.xtablayout.XTabLayout>
 
         <ImageView
             android:id="@+id/new_vedio"
@@ -71,6 +72,24 @@
             android:layout_height="35dp"
             android:background="@mipmap/ic_main_menu"
             android:layout_centerInParent="true"/>
+        <Button
+            android:id="@+id/btn_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:background="@color/transparent"
+            android:text="首页"
+            android:textColor="@color/white"/>
+        <Button
+            android:id="@+id/btn_myVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@color/transparent"
+            android:text="我"
+            android:textColor="@color/white"/>
     </RelativeLayout>
 
 </RelativeLayout>
