@@ -13,10 +13,24 @@
         android:src="@drawable/ic_action_name"
         android:background="@android:color/transparent"
         android:layout_height="wrap_content"/>
+    <Button
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="record"
+        android:id="@+id/videoshoot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     <ImageView
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/image_preview"
+        android:layout_width="108dp"
+        android:layout_height="192dp"
+        android:visibility="invisible"/>
+    <SurfaceView
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/video_preview"
         android:layout_width="108dp"
         android:layout_height="192dp"
         android:visibility="invisible"/>

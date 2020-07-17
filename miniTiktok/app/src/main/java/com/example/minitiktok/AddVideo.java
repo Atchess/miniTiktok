@@ -8,13 +8,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 //import android.support.annotation.Nullable;
 //import android.support.constraint.ConstraintLayout;
 //import android.support.v4.graphics.PathUtils;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -23,12 +27,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.minitiktok.CameraPreview;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 //import android.view.SurfaceHolder;
 //import android.view.SurfaceView;
 
@@ -38,9 +44,15 @@ public class AddVideo extends Activity {
     private MediaRecorder mMediaRecorder;
     //    private ImageView preview;
     private ImageButton trigger,confirm;
+    private Button videoshoot;
     private Camera.PictureCallback mPicture;
-//    SurfaceHolder mHolder;
+    private boolean isRecording=false;
+    private SurfaceView video_preview;
+    private MediaPlayer player;
+    private SurfaceHolder mholder;
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +82,8 @@ public class AddVideo extends Activity {
                     mCamera.startPreview();
                     Bitmap rotateBitmap= rotateBitmap(bitmap,90);
                     preview.setImageBitmap(rotateBitmap);
+                    if(video_preview==null)video_preview=findViewById(R.id.video_preview);
+                    video_preview.setVisibility(View.INVISIBLE);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -93,8 +107,63 @@ public class AddVideo extends Activity {
             @Override
             public void onClick(View v) {
                 Intent it2=new Intent();
-                it2.setData(Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "1.jpg")));
+                Uri uri=Uri.fromFile(new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath() + File.separator + "1.jpg"));
+                it2.setData(uri);
+                Log.i("THE CAMERA","URI:"+uri.toString());
                 finish();
+            }
+        });
+        videoshoot=findViewById(R.id.videoshoot);
+        videoshoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isRecording) {
+                    // stop recording and release camera
+                    mMediaRecorder.stop();  // stop the recording
+                    mMediaRecorder.release(); // release the MediaRecorder object
+                    mCamera.lock();         // take camera access back from MediaRecorder
+
+                    // inform the user that recording has stopped
+                    videoshoot.setText("record");
+                    isRecording = false;
+
+                    video_preview = findViewById(R.id.video_preview);
+                    player = new MediaPlayer();
+                    try {
+                        player.setDataSource(getOutputMediaPath());
+                        mholder = video_preview.getHolder();
+                        mholder.addCallback(new PlayerCallBack());
+                        player.prepare();
+                        player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+                                // 自动播放
+                                player.start();
+                                video_preview.bringToFront();
+                                video_preview.setVisibility(View.VISIBLE);
+                                player.setLooping(false);
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    // initialize video camera
+                    if (prepareVideoRecorder()) {
+                        // Camera is available and unlocked, MediaRecorder is prepared,
+                        // now you can start recording
+                        mMediaRecorder.start();
+
+                        // inform the user that recording has started
+                        videoshoot.setText("Stop");
+                        isRecording = true;
+                    } else {
+                        // prepare didn't work, release the camera
+                        mMediaRecorder.release();
+                        // inform user
+                    }
+                }
             }
         });
     }
@@ -141,6 +210,12 @@ public class AddVideo extends Activity {
     protected void onPause() {
         super.onPause();
         mCamera.stopPreview();
+        
+        if (player != null) {
+            player.stop();
+            player.release();
+        }
+
 //        if(mMediaRecorder!=null){
 //            mMediaRecorder.reset();
 //            mMediaRecorder.release();
@@ -154,5 +229,60 @@ public class AddVideo extends Activity {
     }
 
 
+    private boolean prepareVideoRecorder(){
 
+        mMediaRecorder = new MediaRecorder();
+
+        // Step 1: Unlock and set camera to MediaRecorder
+        mCamera.unlock();
+        mMediaRecorder.setCamera(mCamera);
+
+        // Step 2: Set sources
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
+        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+
+        // Step 4: Set output file
+        String mp4path=getOutputMediaPath();
+        mMediaRecorder.setOutputFile(mp4path);
+
+        // Step 5: Set the preview output
+        mMediaRecorder.setPreviewDisplay(mPreview.getHolder().getSurface());
+        mMediaRecorder.setOrientationHint(90);
+
+        // Step 6: Prepare configured MediaRecorder
+        try {
+            mMediaRecorder.prepare();
+        } catch (Exception e) {
+            mMediaRecorder.release();
+            return false;
+        }
+        return true;
+    }
+    private  String getOutputMediaPath(){
+        File mediaStorageDir=getExternalFilesDir(Environment.DIRECTORY_DCIM);
+//        String timestamp=new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile=new File(mediaStorageDir,"IMG_.mp4");
+        if(!mediaFile.exists())mediaFile.getParentFile().mkdirs();
+        return mediaFile.getAbsolutePath();
+    }
+
+    private class PlayerCallBack implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            player.setDisplay(holder);
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+
+        }
+    }
 }
