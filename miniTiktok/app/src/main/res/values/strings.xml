@@ -2,11 +2,14 @@
     <string name="app_name">miniTiktok</string>
     <string name="request_data">request data</string>
     <string name="requesting">requesting…</string>
-    <string name="select_an_image">select an image</string>
-    <string name="select_a_video">select a video</string>
-    <string name="take_an_image">take an image</string>
-    <string name="take_a_video">take a video</string>
-    <string name="post_it">post it!</string>
+    <string name="select_an_image">选择已有照片</string>
+    <string name="select_a_video">选择已有视频</string>
+    <string name="take_an_image">拍摄照片</string>
+    <string name="take_a_video">录制视频</string>
+    <string name="post_it">上传</string>
     <string name="refresh_feed">refresh feed</string>
     <string name="success_try_refresh">SUCCESS, try refresh!</string>
+    <string name="record">录制</string>
+    <string name="stop">停止</string>
+    <string name="photo">拍摄</string>
 </resources>

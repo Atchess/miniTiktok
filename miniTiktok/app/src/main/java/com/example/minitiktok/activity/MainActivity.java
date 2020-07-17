@@ -1,9 +1,11 @@
 package com.example.minitiktok.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +48,13 @@ public class MainActivity extends BaseActivity {
     protected void init() {
         viewPager = findViewById(R.id.viewpager);
         fragments.add(mainFragment);
+        try {
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, 2);
+        } catch (Exception e) {
+            Log.d("TAG", "Error when opening");
+            e.printStackTrace();
+        }
         pagerAdapter = new BasePagerAdapter(getSupportFragmentManager(), fragments, new String[]{"",""});
         viewPager.setAdapter(pagerAdapter);
 

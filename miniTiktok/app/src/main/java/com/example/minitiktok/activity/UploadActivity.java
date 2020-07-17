@@ -1,8 +1,11 @@
 package com.example.minitiktok.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +35,8 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     private static final int PICK_IMAGE = 1;
     private static final int PICK_VIDEO = 2;
+    private static final int TAKE_VIDEO = 3;
+    private static final int TAKE_IMAGE = 4;
     private static final String TAG = "UploadActivity";
     public Uri mSelectedImage;
     private Uri mSelectedVideo;
@@ -81,12 +86,25 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                 chooseImage();
                 break;
             case R.id.btn_take_video:
+                takeVideo();
+                break;
             case R.id.btn_take_photo:
+                takePhoto();
                 break;
             case R.id.btn_upload:
                 postVideo();
                 break;
         }
+    }
+
+    private void takeVideo(){
+        Intent intent = new Intent(UploadActivity.this, TakeVideoActivity.class);
+        startActivityForResult(intent,TAKE_VIDEO);
+    }
+
+    private void takePhoto(){
+        Intent intent = new Intent(UploadActivity.this, TakePhotoActivity.class);
+        startActivityForResult(intent,TAKE_IMAGE);
     }
 
     @Override
@@ -108,18 +126,33 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             } else if (requestCode == PICK_VIDEO) {
                 mSelectedVideo = data.getData();
                 Log.d(TAG, "mSelectedVideo = " + mSelectedVideo);
+            } else if (requestCode == TAKE_IMAGE) {
+                mSelectedImage = Uri.parse(data.getStringExtra("Url"));
+                Log.d(TAG, "selectedImage = " + mSelectedImage);
+            } else if (requestCode == TAKE_VIDEO) {
+                mSelectedVideo = Uri.parse(data.getStringExtra("Url"));
+                Log.d(TAG, "mSelectedVideo = " + mSelectedVideo);
             }
         }
     }
 
     private MultipartBody.Part getMultipartFromUri(String name, Uri uri) {
-        File f = new File(ResourceUtils.getRealPath(UploadActivity.this, uri));
+        File f;
+        if (uri.toString().charAt(0) != '/')
+            f = new File(ResourceUtils.getRealPath(UploadActivity.this, uri));
+        else
+            f =new File(uri.toString());
         RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), f);
+        //Log.i("TAG",name+":"+ResourceUtils.getRealPath(UploadActivity.this, uri));
         return MultipartBody.Part.createFormData(name, f.getName(), requestFile);
     }
 
     private void postVideo() {
-        mBtn.setText("POSTING...");
+        if (mSelectedImage==null || mSelectedVideo==null){
+            Toast.makeText(UploadActivity.this, "需要选择数据", Toast.LENGTH_SHORT).show();
+            return ;
+        }
+        mBtn.setText("正在上传...");
         mBtn.setEnabled(false);
         MultipartBody.Part coverImagePart = getMultipartFromUri("cover_image", mSelectedImage);
         MultipartBody.Part videoPart = getMultipartFromUri("video", mSelectedVideo);
@@ -143,6 +176,7 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
                         mBtn.setText(R.string.post_it);
                         mBtn.setEnabled(true);
                         Toast.makeText(UploadActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.i("TAG","fail"+throwable.getMessage());
                     }
                 });
         Log.i("TAG","finish");

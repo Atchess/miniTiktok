@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.TakeVideoActivity">
+
+    <SurfaceView
+        android:id="@+id/sv_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <VideoView
+        android:id="@+id/vv_video"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_gravity="right"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal">
+        <Button
+            android:id="@+id/bt_video"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/holo_blue_light"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:onClick="record"
+            android:text="@string/record"/>
+    </LinearLayout>
+
+
+
+</FrameLayout>
