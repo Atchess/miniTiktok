@@ -68,8 +68,6 @@ public class TakeVideoActivity extends AppCompatActivity {
                     mVideoView.setVideoPath(mp4Path);
                     mVideoView.start();
                     Intent intent = getIntent();
-                    Bundle data = new Bundle();
-                    data.putString("Url",mp4Path);
                     Log.i("TAG",mp4Path);
                     intent.putExtra("Url",mp4Path);
                     TakeVideoActivity.this.setResult(-1,intent);
